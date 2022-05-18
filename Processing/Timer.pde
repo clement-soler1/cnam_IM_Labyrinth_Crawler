@@ -7,7 +7,7 @@ class Timer {
   }
   
   public void start() {
-      time = 0;
+      time = millis();
   }
   
   public int getTime() {
@@ -22,17 +22,20 @@ class Timer {
   }
   
   public String getStringTime() {
-    int sec_int =  getTime("s");
-    
-    String min = "" + (sec_int / 60);
-    if (min.length() == 1) {
-      min = "0" + min;
-    }
-    String sec = "" + (sec_int % 60);
-    if (sec.length() == 1) {
-      sec = "0" + min;
-    }
-    return min + ":" + sec;
+    if (time == 0) {
+      return "00:00";
+    } else {
+      int sec_int =  getTime("s");
+      String min = "" + (sec_int / 60);
+      if (min.length() == 1) {
+        min = "0" + min;
+      }
+      String sec = "" + (sec_int % 60);
+      if (sec.length() == 1) {
+        sec = "0" + sec;
+      }
+      return min + ":" + sec;
+    } 
   }
   
 }
