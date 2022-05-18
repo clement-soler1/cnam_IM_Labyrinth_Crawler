@@ -26,6 +26,8 @@ float timeMS_ = millis();
 float timeS_ = timeMS_ * 0.001;
 float timeSOld_ = timeMS_;
 
+Timer timer;
+
 int videoWidth_ = 320;
 int videoHeight_ = 180;
 // int scale_ = 6;
@@ -61,6 +63,8 @@ void setup() {
   row_right = loadImage("arrow_right.png");
   map = loadImage("map.png");
   
+  //new Timer instance
+  timer = new Timer();
   point_actuelle = junctions.get(0);
   
   String[] cameras = Capture.list();
@@ -258,6 +262,8 @@ void draw() {
       drawHotSpots();
       
       detectHotSpots();
+      
+      drawTimer();
     
       first_ = false; 
     }
@@ -298,8 +304,10 @@ void keyPressed() {
     destination_y_map = dest.y;
   }
   
+  if ( ( keyCode == 'n' ) || ( keyCode == 'N' )) {
+    timer.start();
+  }
   
-   
 }
 
 //TO DO
@@ -365,4 +373,8 @@ void goToBottom() {
   } else {
     y_map = y_map - speed;
   }
+}
+
+void drawTimer() {
+  text(timer.getStringTime(), 10, 10);
 }
