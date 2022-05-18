@@ -262,5 +262,38 @@ void keyPressed() {
     cam_.stop();
     exit();
   }
+  
+  
    
+}
+
+//TO DO
+void loadPlayer() {
+  
+}
+
+//TO DO
+void loadMap() {
+  
+}
+
+
+//TO DO 
+void goToLeft() {
+  
+}
+
+//TO DO
+void goToRight() {
+  
+}
+
+//TO DO
+void goToTop() {
+  
+}
+
+//TO DO
+void goToBottom() {
+  
 }
