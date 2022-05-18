@@ -14,6 +14,8 @@ float timeMS_ = millis();
 float timeS_ = timeMS_ * 0.001;
 float timeSOld_ = timeMS_;
 
+Timer timer;
+
 int videoWidth_ = 320;
 int videoHeight_ = 180;
 // int scale_ = 6;
@@ -47,6 +49,9 @@ void setup() {
   row_top = loadImage("arrow_top.png");
   row_left = loadImage("arrow_left.png");
   row_right = loadImage("arrow_right.png");
+  
+  //new Timer instance
+  timer = new Timer();
   
   String[] cameras = Capture.list();
   
@@ -224,11 +229,13 @@ void draw() {
       
       scale(scale_);
       
-      opencv_.drawOpticalFlow();
+      //opencv_.drawOpticalFlow();
       
       drawHotSpots();
       
       detectHotSpots();
+      
+      drawTimer();
     
       first_ = false; 
     }
@@ -263,8 +270,10 @@ void keyPressed() {
     exit();
   }
   
+  if ( ( keyCode == 'n' ) || ( keyCode == 'N' )) {
+    timer.start();
+  }
   
-   
 }
 
 //TO DO
@@ -296,4 +305,8 @@ void goToTop() {
 //TO DO
 void goToBottom() {
   
+}
+
+void drawTimer() {
+  text(timer.getStringTime(), 10, 10);
 }
