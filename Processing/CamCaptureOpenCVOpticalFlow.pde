@@ -38,6 +38,15 @@ float selectDelaySo_ = 0.5;
 float selectDelayS_ = selectDelaySo_;
 
 //============
+
+//  Player animations variables
+Animation[] playerSpritesAnimated;
+PImage[] playerSpritesIdle;
+HashMap<String,Integer> playerAnimations = new HashMap<String,Integer>();
+AnimationController animation;
+int previousTime;
+int runAnimationDuration = 1500;
+
 void setup() {
   
   //fullScreen();
@@ -97,6 +106,8 @@ void setup() {
     
     cam_.start();     
   }      
+    animation = new AnimationController();
+    previousTime = millis();
 }
 
 
@@ -267,9 +278,17 @@ void keyPressed() {
    
 }
 
-//TO DO
+//TO DO Remove millis logic and check if player arrived at intersection instead (breakpoint instead of duration) 
 void loadPlayer() {
-  
+  if(animation.displayIdle) {
+    animation.displayIdle(animation.spriteDirection);  
+  } else {
+    if (millis() - previousTime <= runAnimationDuration) {
+       animation.displayAnimated(animation.spriteDirection);
+    } else {
+       animation.displayIdle = !animation.displayIdle;
+      }
+  }
 }
 
 //TO DO
@@ -280,20 +299,28 @@ void loadMap() {
 
 //TO DO 
 void goToLeft() {
-  
+  animation.changeDirection("left");
+  animation.displayIdle = !animation.displayIdle;
+  previousTime = millis();
 }
 
 //TO DO
 void goToRight() {
-  
+  animation.changeDirection("right");
+  animation.displayIdle = !animation.displayIdle;
+  previousTime = millis();
 }
 
 //TO DO
 void goToTop() {
-  
+  animation.changeDirection("up");
+  animation.displayIdle = !animation.displayIdle;
+  previousTime = millis();
 }
 
 //TO DO
 void goToBottom() {
-  
+  animation.changeDirection("down");
+  animation.displayIdle = !animation.displayIdle;
+  previousTime = millis();
 }
