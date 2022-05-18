@@ -14,6 +14,8 @@ float timeMS_ = millis();
 float timeS_ = timeMS_ * 0.001;
 float timeSOld_ = timeMS_;
 
+Timer timer;
+
 int videoWidth_ = 320;
 int videoHeight_ = 180;
 // int scale_ = 6;
@@ -28,7 +30,7 @@ Flow flow_ = null;
 HotSpot[] hotSpots_ = new HotSpot[4];
 
 //================================
-float detectAbsoluteMagMin_ = 2.0; 
+float detectAbsoluteMagMin_ = 2.0;
 float detectAverageMagMax_ = 1.2;
 float psAverageMax_ = 0.2;
 //=================================
@@ -48,17 +50,20 @@ int previousTime;
 int runAnimationDuration = 1500;
 
 void setup() {
-  
+
   //fullScreen();
   size(960,540);
-  
+
   row_bottom = loadImage("arrow_bottom.png");
   row_top = loadImage("arrow_top.png");
   row_left = loadImage("arrow_left.png");
   row_right = loadImage("arrow_right.png");
-  
+
+  //new Timer instance
+  timer = new Timer();
+
   String[] cameras = Capture.list();
-  
+
   if (cameras.length == 0) {
     println("There are no cameras available for capture.");
     exit();
@@ -67,45 +72,45 @@ void setup() {
     for (int i = 0; i < cameras.length; i++) {
       println(cameras[i]);
     }
-    
-    // The camera can be initialized directly using an 
+
+    // The camera can be initialized directly using an
     // element from the array returned by list():
     cam_ = new Capture(this, videoWidth_, videoHeight_, "Integrated Webcam");
-    
+
     opencv_ = new OpenCV(this, videoWidth_, videoHeight_);
-    
+
     flow_ = opencv_.flow;
-    
+
     flow_.setPyramidScale(0.5); // default : 0.5
     flow_.setLevels(1); // default : 4
     flow_.setWindowSize(8); // default : 8
     flow_.setIterations(1); // default : 2
     flow_.setPolyN(3); // default : 7
     flow_.setPolySigma(1.5); // default : 1.5
-    
+
     int m = 10;
     int w = 50;
     int h = 30;
-    
+
     int x = m;
     int y = m;
     x = videoWidth_ / 2 - w / 2;
     hotSpots_[0] = new HotSpot(x,y,w,h);
-    
+
     x = m;
     y = videoHeight_ /2 - h /2 ;
     hotSpots_[1] = new HotSpot(x,y,w,h);
-    
+
     x = videoWidth_ - m - w;
     hotSpots_[2] = new HotSpot(x,y,w,h);
-    
+
     x = videoWidth_ / 2 - w / 2;
     y = videoHeight_ - m - h;
     hotSpots_[3] = new HotSpot(x,y,w,h);
-    
-    
-    cam_.start();     
-  }      
+
+
+    cam_.start();
+  }
     animation = new AnimationController();
     previousTime = millis();
 }
@@ -113,19 +118,19 @@ void setup() {
 
 //=====================
 void detectHotSpots() {
-  
+
   for ( int k = 0 ; k < 4 ; k++ ) {
-    
+
     HotSpot hs = hotSpots_[k];
-    
+
     int nb = 0;
-    
+
     float absolute_mag = 0.0;
     PVector p_average = new PVector(0.,0.);
     float ps_average = 0.0;
-    
+
     int step = 2;
-      
+
     //=======================================
     for( int j = 0 ; j < hs.h ; j += step ) {
       for( int i = 0 ; i < hs.w ; i += step ) {
@@ -133,22 +138,22 @@ void detectHotSpots() {
         absolute_mag += p.mag();
         p_average.add(p);
         nb++;
-      }   
+      }
     }
     absolute_mag /= nb;
     p_average.div(nb);
     float average_mag = p_average.mag();
-    
+
     //=======================================
     for( int j = 0 ; j < hs.h ; j += step ) {
       for( int i = 0 ; i < hs.w ; i += step ) {
         PVector p = flow_.getFlowAt(hs.x+i,hs.y+j);
         ps_average += p.dot(p_average);
         nb++;
-      }   
+      }
     }
     ps_average /= nb;
-    
+
     noFill();
     stroke(0,0,255);
     strokeWeight(2.);
@@ -157,19 +162,19 @@ void detectHotSpots() {
     float x2 = x1 + p_average.x;
     float y2 = y1 + p_average.y;
     line(x1,y1,x2,y2);
-    
+
     boolean absolute_mag_ok = absolute_mag > detectAbsoluteMagMin_;
     boolean average_mag_ok = average_mag < detectAverageMagMax_;
     boolean ps_average_ok = ps_average < psAverageMax_;
-       
+
     if ( selectDelayS_ < 0.) {
-      
+
       if ( absolute_mag_ok ) {
-        
+
         if ( average_mag_ok )  {
-          
+
           if ( ps_average_ok )  {
-            
+
             selectedHotSpotIndex_ = selectedHotSpotIndex_ == k ? -1 : k;
             selectDelayS_ = selectDelaySo_;
           }
@@ -183,7 +188,7 @@ void detectHotSpots() {
 void drawHotSpots() {
   noFill();
   strokeWeight(1.);
-  for ( int k = 0 ; k < 4 ; k++ ) { 
+  for ( int k = 0 ; k < 4 ; k++ ) {
     stroke(255,0,0);
     if ( ( selectedHotSpotIndex_ >= 0 ) && ( k == selectedHotSpotIndex_ ) ) {
       stroke(0,255,0);
@@ -194,20 +199,20 @@ void drawHotSpots() {
 
 //===========
 void draw() {
-  
+
   synchronized(this) {
-    
+
     timeMS_ = millis();
     timeS_ = timeMS_ * 0.001;
-    
+
     selectDelayS_ -= timeS_ - timeSOld_;
-  
+
     background(0,0,0);
-    
+
     if ( frames_[currentFrameIndex_] != null ) {
-      
+
       //frames_[currentFrameIndex_].resize(640*scale,360*scale); // slow...
-      
+
       frames_[currentFrameIndex_].loadPixels();
       fullFrame_.loadPixels();
       for (int j = 0; j < fullFrame_.height ; j+=2) {
@@ -218,7 +223,7 @@ void draw() {
         }
       }
       fullFrame_.updatePixels();
-      
+
       tint(255, 255, 255, 255);
       image(fullFrame_, 0, 0);
       // Left
@@ -227,32 +232,34 @@ void draw() {
       image(row_right,800,200, 150, 150);
       // Top
       image(row_top,400,0, 150, 150);
-      // Bottom       
+      // Bottom
       image(row_bottom,400,400, 150, 150);
-      
+
       stroke(255,0,0);
       strokeWeight(1.);
-      
+
       scale(scale_);
-      
-      opencv_.drawOpticalFlow();
-      
+
+      //opencv_.drawOpticalFlow();
+
       drawHotSpots();
-      
+
       detectHotSpots();
-    
-      first_ = false; 
+
+      drawTimer();
+
+      first_ = false;
     }
   }
-  
+
   timeSOld_ = timeS_;
 }
 
 //============================
 void captureEvent(Capture c) {
-  
+
   synchronized(this) {
-    
+
     c.read();
     //opencv.useColor(RGB);
     opencv_.useGray();
@@ -260,11 +267,11 @@ void captureEvent(Capture c) {
     opencv_.flip(OpenCV.HORIZONTAL);
     //opencv_.flip(OpenCV.VERTICAL);
     opencv_.calculateOpticalFlow();
-    
+
     frames_[currentFrameIndex_] = opencv_.getSnapshot();
-    
+
   }
-  
+
 }
 
 //=================
@@ -273,15 +280,17 @@ void keyPressed() {
     cam_.stop();
     exit();
   }
-  
-  
-   
+
+  if ( ( keyCode == 'n' ) || ( keyCode == 'N' )) {
+    timer.start();
+  }
+
 }
 
-//TO DO Remove millis logic and check if player arrived at intersection instead (breakpoint instead of duration) 
+//TO DO Remove millis logic and check if player arrived at intersection instead (breakpoint instead of duration)
 void loadPlayer() {
   if(animation.displayIdle) {
-    animation.displayIdle(animation.spriteDirection);  
+    animation.displayIdle(animation.spriteDirection);
   } else {
     if (millis() - previousTime <= runAnimationDuration) {
        animation.displayAnimated(animation.spriteDirection);
@@ -293,11 +302,11 @@ void loadPlayer() {
 
 //TO DO
 void loadMap() {
-  
+
 }
 
 
-//TO DO 
+//TO DO
 void goToLeft() {
   animation.changeDirection("left");
   animation.displayIdle = !animation.displayIdle;
@@ -323,4 +332,8 @@ void goToBottom() {
   animation.changeDirection("down");
   animation.displayIdle = !animation.displayIdle;
   previousTime = millis();
+}
+
+void drawTimer() {
+  text(timer.getStringTime(), 10, 10);
 }
