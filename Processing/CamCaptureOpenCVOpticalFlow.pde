@@ -1,6 +1,8 @@
 import processing.video.*;
 import gab.opencv.*;
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
 Capture cam_;
 OpenCV opencv_;
@@ -9,6 +11,16 @@ PImage row_bottom;
 PImage row_top;
 PImage row_left;
 PImage row_right;
+PImage map;
+
+Integer speed = 4;
+Integer x_map = -130;
+Integer y_map = -640;
+Integer destination_x_map = -130;
+Integer destination_y_map = -640;
+Junction point_actuelle;
+
+Map<Integer, Junction> junctions;
 
 float timeMS_ = millis();
 float timeS_ = timeMS_ * 0.001;
@@ -39,7 +51,7 @@ float selectDelayS_ = selectDelaySo_;
 
 //============
 void setup() {
-  
+  loadMap();
   //fullScreen();
   size(960,540);
   
@@ -47,6 +59,9 @@ void setup() {
   row_top = loadImage("arrow_top.png");
   row_left = loadImage("arrow_left.png");
   row_right = loadImage("arrow_right.png");
+  map = loadImage("map.png");
+  
+  point_actuelle = junctions.get(0);
   
   String[] cameras = Capture.list();
   
@@ -61,7 +76,7 @@ void setup() {
     
     // The camera can be initialized directly using an 
     // element from the array returned by list():
-    cam_ = new Capture(this, videoWidth_, videoHeight_, "Integrated Webcam");
+    cam_ = new Capture(this, videoWidth_, videoHeight_, "AUKEY PC-LM1 USB Camera");
     
     opencv_ = new OpenCV(this, videoWidth_, videoHeight_);
     
@@ -224,7 +239,21 @@ void draw() {
       
       scale(scale_);
       
-      opencv_.drawOpticalFlow();
+      //opencv_.drawOpticalFlow();
+      
+      image(map,x_map,y_map);
+      if (destination_x_map > x_map) {
+        goToRight();
+      }
+      if (destination_x_map < x_map) {
+        goToLeft();
+      }
+      if (destination_y_map < y_map) {
+        goToBottom();
+      }
+      if (destination_y_map > y_map) {
+        goToTop();
+      }
       
       drawHotSpots();
       
@@ -262,6 +291,12 @@ void keyPressed() {
     cam_.stop();
     exit();
   }
+  if (keyCode == DOWN) {    
+    System.out.println("yo");
+    Junction dest = point_actuelle.getDestination(2, junctions);
+    destination_x_map = dest.x;
+    destination_y_map = dest.y;
+  }
   
   
    
@@ -274,26 +309,60 @@ void loadPlayer() {
 
 //TO DO
 void loadMap() {
+  junctions = new HashMap<Integer, Junction>();
+  JSONArray json = loadJSONArray("map.json");
   
+  for (Integer i = 0; i < json.size(); i++)
+  {
+    JSONObject junc = json.getJSONObject(i);
+    Integer x = junc.isNull("x") ? null : junc.getInt("x");
+    Integer y = junc.isNull("y") ? null : junc.getInt("y");
+    JSONArray directionJson = junc.getJSONArray("direction");
+    Integer[] direction = {
+      directionJson.isNull(0) ? null : directionJson.getInt(0),
+      directionJson.isNull(1) ? null : directionJson.getInt(1),
+      directionJson.isNull(2) ? null : directionJson.getInt(2),
+      directionJson.isNull(3) ? null : directionJson.getInt(3),
+    };
+    Junction junction = new Junction(direction, x, y);
+    junctions.put(i, junction);
+  }  
 }
 
 
 //TO DO 
 void goToLeft() {
-  
+  if (x_map - speed < destination_x_map) {
+    x_map = destination_x_map; 
+  } else {
+    x_map = x_map - speed;
+  }
 }
 
 //TO DO
-void goToRight() {
-  
+void goToRight() {  
+  if (x_map + speed > destination_x_map) {
+    x_map = destination_x_map; 
+  } else {
+    x_map = x_map + speed;
+  }
+  x_map = x_map + speed;
 }
 
 //TO DO
 void goToTop() {
-  
+  if (y_map + speed > destination_y_map) {
+    y_map = destination_y_map; 
+  } else {
+    y_map = y_map + speed;
+  }
 }
 
 //TO DO
 void goToBottom() {
-  
+  if (y_map - speed < destination_y_map) {    
+    y_map = destination_y_map; 
+  } else {
+    y_map = y_map - speed;
+  }
 }
