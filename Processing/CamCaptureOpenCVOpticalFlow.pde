@@ -379,7 +379,8 @@ void loadMap() {
   {
     JSONObject junc = json.getJSONObject(i);
     Integer x = junc.isNull("x") ? null : junc.getInt("x");
-    Integer y = junc.isNull("y") ? null : junc.getInt("y");
+    Integer y = junc.isNull("y") ? null : junc.getInt("y");    
+    Integer id = junc.isNull("id") ? null : junc.getInt("id");
     JSONArray directionJson = junc.getJSONArray("direction");
     Integer[] direction = {
       directionJson.isNull(0) ? null : directionJson.getInt(0),
@@ -387,7 +388,7 @@ void loadMap() {
       directionJson.isNull(2) ? null : directionJson.getInt(2),
       directionJson.isNull(3) ? null : directionJson.getInt(3),
     };
-    Junction junction = new Junction(direction, x, y);
+    Junction junction = new Junction(direction, x, y, id);
     junctions.put(i, junction);
   }  
 }
