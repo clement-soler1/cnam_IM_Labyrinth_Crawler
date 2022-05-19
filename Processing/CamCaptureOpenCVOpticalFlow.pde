@@ -13,7 +13,7 @@ PImage row_left;
 PImage row_right;
 PImage map;
 
-Integer speed = 4;
+Integer speed = 15;
 Integer x_map = -130;
 Integer y_map = -640;
 Integer destination_x_map = -130;
@@ -324,9 +324,9 @@ void draw() {
       
       image(map,x_map,y_map);
       loadPlayer();
-      if (destination_x_map > x_map) {
+      if (destination_x_map < x_map) {
         goToRight();
-      } else if (destination_x_map < x_map) {
+      } else if (destination_x_map > x_map) {
         goToLeft();
       } else if (destination_y_map < y_map) {
         goToBottom();
@@ -336,7 +336,6 @@ void draw() {
         is_moving = false;
         point_actuelle = point_actuelle.getDestination(direction_actuelle, junctions);
         selectedHotSpotIndex_ = -1;
-        drawHotSpots();
         if (point_actuelle.id == point_victoire) {
           // Victoire ICI
         }
@@ -426,14 +425,11 @@ void keyPressed() {
 
 //TO DO Remove millis logic and check if player arrived at intersection instead (breakpoint instead of duration)
 void loadPlayer() {
-  if(animation.displayIdle) {
-    animation.displayIdle(animation.spriteDirection, x_map, y_map);
+
+  if(!is_moving) {
+    animation.displayIdle(0, videoWidth_/2 - 15, videoHeight_/2 - 23);
   } else {
-    if (millis() - previousTime <= runAnimationDuration) {
-       animation.displayAnimated(animation.spriteDirection, x_map, y_map);
-    } else {
-       animation.displayIdle = !animation.displayIdle;
-      }
+    animation.displayAnimated(animation.spriteDirection, videoWidth_/2 - 15, videoHeight_/2 - 23);
   }
 }
 
@@ -462,35 +458,34 @@ void loadMap() {
 
 //TO DO
 void goToLeft() {
-  /*animation.changeDirection("left");
+  animation.changeDirection("left");
   animation.displayIdle = !animation.displayIdle;
-  previousTime = millis();*/
-  if (x_map - speed < destination_x_map) {
-    x_map = destination_x_map; 
-  } else {
-    x_map = x_map - speed;
-  }
-}
-
-//TO DO
-void goToRight() {  
-  /*animation.changeDirection("right");
-  animation.displayIdle = !animation.displayIdle;
-  previousTime = millis();*/
-
+  previousTime = millis();
   if (x_map + speed > destination_x_map) {
     x_map = destination_x_map; 
   } else {
     x_map = x_map + speed;
   }
-  x_map = x_map + speed;
+}
+
+//TO DO
+void goToRight() {  
+  animation.changeDirection("right");
+  animation.displayIdle = !animation.displayIdle;
+  previousTime = millis();
+  if (x_map - speed < destination_x_map) {
+    x_map = destination_x_map; 
+  } else {
+    x_map = x_map - speed;
+  }
+  x_map = x_map - speed;
 }
 
 //TO DO
 void goToTop() {
-  /*animation.changeDirection("up");
+  animation.changeDirection("up");
   animation.displayIdle = !animation.displayIdle;
-  previousTime = millis();  */
+  previousTime = millis();  
   if (y_map + speed > destination_y_map) {
     y_map = destination_y_map; 
   } else {
@@ -500,9 +495,9 @@ void goToTop() {
 
 //TO DO
 void goToBottom() {
-  /*animation.changeDirection("down");
+  animation.changeDirection("down");
   animation.displayIdle = !animation.displayIdle;
-  previousTime = millis();  */
+  previousTime = millis();  
   if (y_map - speed < destination_y_map) {    
     y_map = destination_y_map; 
   } else {
