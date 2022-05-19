@@ -3,6 +3,8 @@ import gab.opencv.*;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import processing.sound.*;
+import ddf.minim.*;
 
 Capture cam_;
 OpenCV opencv_;
@@ -64,10 +66,20 @@ AnimationController animation;
 int previousTime;
 int runAnimationDuration = 1500;
 
+Minim minim;
+AudioPlayer player;
+AudioPlayer beep;
+
 void setup() {
   loadMap();
   //fullScreen();
   size(960,540);
+  minim = new Minim(this);
+  player = minim.loadFile("background.mp3");
+  player.setGain(0.5);
+  player.play();
+  
+  beep = minim.loadFile("beep.mp3");
 
   row_bottom = loadImage("arrow_bottom.png");
   row_top = loadImage("arrow_top.png");
@@ -92,7 +104,7 @@ void setup() {
 
     // The camera can be initialized directly using an
     // element from the array returned by list():
-    cam_ = new Capture(this, videoWidth_, videoHeight_, "AUKEY PC-LM1 USB Camera");
+    cam_ = new Capture(this, videoWidth_, videoHeight_, "Integrated Webcam");
 
     opencv_ = new OpenCV(this, videoWidth_, videoHeight_);
 
@@ -235,6 +247,8 @@ void detectHotSpots() {
               }
             }
             selectDelayS_ = selectDelaySo_;
+            beep.rewind();
+            beep.play();
           }
         }
       }
@@ -280,7 +294,7 @@ Integer convertHotSpotsToJunction(Integer hotSpot) {
 
 //===========
 void draw() {
-
+  
   synchronized(this) {
 
     timeMS_ = millis();
@@ -507,4 +521,10 @@ void goToBottom() {
 
 void drawTimer() {
   text(timer.getStringTime(), 10, 10);
+}
+
+void stop() {
+   beep.close();
+   minim.stop();
+   super.stop();
 }
