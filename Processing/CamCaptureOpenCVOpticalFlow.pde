@@ -191,8 +191,49 @@ void detectHotSpots() {
         if ( average_mag_ok )  {
 
           if ( ps_average_ok )  {
-
+           
             selectedHotSpotIndex_ = selectedHotSpotIndex_ == k ? -1 : k;
+            Junction dest;
+            if (!is_moving) {
+              switch(selectedHotSpotIndex_) {
+                case 0:
+                  dest = point_actuelle.getDestination(0, junctions);
+                  if (dest != null) {
+                    direction_actuelle = 0;
+                    destination_x_map = dest.x;
+                    destination_y_map = dest.y;
+                    is_moving = true;
+                  }
+                  break;
+                case 1:
+                  dest = point_actuelle.getDestination(3, junctions);
+                  if (dest != null) {
+                    direction_actuelle = 3;
+                    destination_x_map = dest.x;
+                    destination_y_map = dest.y;
+                    is_moving = true;
+                  }
+                  break;
+                case 2:
+                  dest = point_actuelle.getDestination(1, junctions);
+                  if (dest != null) {
+                    direction_actuelle = 1;
+                    destination_x_map = dest.x;
+                    destination_y_map = dest.y;
+                    is_moving = true;
+                  }
+                  break;
+                case 3:
+                  dest = point_actuelle.getDestination(2, junctions);
+                  if (dest != null) {
+                    direction_actuelle = 2;
+                    destination_x_map = dest.x;
+                    destination_y_map = dest.y;
+                    is_moving = true;
+                  }
+                  break;
+              }
+            }
             selectDelayS_ = selectDelaySo_;
           }
         }
@@ -203,15 +244,38 @@ void detectHotSpots() {
 
 //===================
 void drawHotSpots() {
-  noFill();
-  strokeWeight(1.);
-  for ( int k = 0 ; k < 4 ; k++ ) {
-    stroke(255,0,0);
-    if ( ( selectedHotSpotIndex_ >= 0 ) && ( k == selectedHotSpotIndex_ ) ) {
-      stroke(0,255,0);
+  if (!is_moving) {
+    noFill();
+    strokeWeight(1.);
+    for ( int k = 0 ; k < 4 ; k++ ) {
+      if (point_actuelle.getDestination(convertHotSpotsToJunction(k), junctions) != null) {
+        stroke(255,0,0);
+        if ( ( selectedHotSpotIndex_ >= 0 ) && ( k == selectedHotSpotIndex_ ) ) {
+          stroke(0,255,0);
+        }
+        rect(hotSpots_[k].x,hotSpots_[k].y,hotSpots_[k].w,hotSpots_[k].h);
+      }
     }
-    rect(hotSpots_[k].x,hotSpots_[k].y,hotSpots_[k].w,hotSpots_[k].h);
   }
+}
+
+Integer convertHotSpotsToJunction(Integer hotSpot) {
+  Integer junction = null;
+   switch(hotSpot) {
+      case 0:
+        junction = 0;
+        break;
+      case 1:
+        junction = 3;
+        break;
+      case 2:
+        junction = 1;
+        break;
+      case 3:
+        junction = 2;
+        break;
+   }
+   return junction;
 }
 
 //===========
@@ -257,7 +321,7 @@ void draw() {
 
       scale(scale_);
 
-      //opencv_.drawOpticalFlow();
+      
       image(map,x_map,y_map);
       loadPlayer();
       if (destination_x_map > x_map) {
@@ -271,6 +335,8 @@ void draw() {
       } else if (is_moving) {
         is_moving = false;
         point_actuelle = point_actuelle.getDestination(direction_actuelle, junctions);
+        selectedHotSpotIndex_ = -1;
+        drawHotSpots();
         if (point_actuelle.id == point_victoire) {
           // Victoire ICI
         }
