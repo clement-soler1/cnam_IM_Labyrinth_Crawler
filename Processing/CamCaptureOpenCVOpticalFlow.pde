@@ -77,7 +77,7 @@ void setup() {
   minim = new Minim(this);
   player = minim.loadFile("background.mp3");
   player.setGain(0.5);
-  player.play();
+  player.loop();
   
   beep = minim.loadFile("beep.mp3");
 
@@ -104,7 +104,7 @@ void setup() {
 
     // The camera can be initialized directly using an
     // element from the array returned by list():
-    cam_ = new Capture(this, videoWidth_, videoHeight_, "Integrated Webcam");
+    cam_ = new Capture(this, videoWidth_, videoHeight_, "AUKEY PC-LM1 USB Camera");
 
     opencv_ = new OpenCV(this, videoWidth_, videoHeight_);
 
@@ -210,7 +210,9 @@ void detectHotSpots() {
               switch(selectedHotSpotIndex_) {
                 case 0:
                   dest = point_actuelle.getDestination(0, junctions);
-                  if (dest != null) {
+                  if (dest != null) {                    
+                    beep.rewind();
+                    beep.play();
                     direction_actuelle = 0;
                     destination_x_map = dest.x;
                     destination_y_map = dest.y;
@@ -219,7 +221,9 @@ void detectHotSpots() {
                   break;
                 case 1:
                   dest = point_actuelle.getDestination(3, junctions);
-                  if (dest != null) {
+                  if (dest != null) {                    
+                    beep.rewind();
+                    beep.play();
                     direction_actuelle = 3;
                     destination_x_map = dest.x;
                     destination_y_map = dest.y;
@@ -228,7 +232,9 @@ void detectHotSpots() {
                   break;
                 case 2:
                   dest = point_actuelle.getDestination(1, junctions);
-                  if (dest != null) {
+                  if (dest != null) {                    
+                    beep.rewind();
+                    beep.play();
                     direction_actuelle = 1;
                     destination_x_map = dest.x;
                     destination_y_map = dest.y;
@@ -237,7 +243,9 @@ void detectHotSpots() {
                   break;
                 case 3:
                   dest = point_actuelle.getDestination(2, junctions);
-                  if (dest != null) {
+                  if (dest != null) {                    
+                    beep.rewind();
+                    beep.play();
                     direction_actuelle = 2;
                     destination_x_map = dest.x;
                     destination_y_map = dest.y;
@@ -247,8 +255,6 @@ void detectHotSpots() {
               }
             }
             selectDelayS_ = selectDelaySo_;
-            beep.rewind();
-            beep.play();
           }
         }
       }
@@ -437,11 +443,10 @@ void keyPressed() {
 
 }
 
-//TO DO Remove millis logic and check if player arrived at intersection instead (breakpoint instead of duration)
 void loadPlayer() {
-
   if(!is_moving) {
-    animation.displayIdle(0, videoWidth_/2 - 15, videoHeight_/2 - 23);
+    animation.changeDirection("down");
+    animation.displayIdle(animation.spriteDirection, videoWidth_/2 - 15, videoHeight_/2 - 23);
   } else {
     animation.displayAnimated(animation.spriteDirection, videoWidth_/2 - 15, videoHeight_/2 - 23);
   }
@@ -474,7 +479,6 @@ void loadMap() {
 void goToLeft() {
   animation.changeDirection("left");
   animation.displayIdle = !animation.displayIdle;
-  previousTime = millis();
   if (x_map + speed > destination_x_map) {
     x_map = destination_x_map; 
   } else {
@@ -486,7 +490,6 @@ void goToLeft() {
 void goToRight() {  
   animation.changeDirection("right");
   animation.displayIdle = !animation.displayIdle;
-  previousTime = millis();
   if (x_map - speed < destination_x_map) {
     x_map = destination_x_map; 
   } else {
@@ -499,7 +502,6 @@ void goToRight() {
 void goToTop() {
   animation.changeDirection("up");
   animation.displayIdle = !animation.displayIdle;
-  previousTime = millis();  
   if (y_map + speed > destination_y_map) {
     y_map = destination_y_map; 
   } else {
@@ -511,7 +513,6 @@ void goToTop() {
 void goToBottom() {
   animation.changeDirection("down");
   animation.displayIdle = !animation.displayIdle;
-  previousTime = millis();  
   if (y_map - speed < destination_y_map) {    
     y_map = destination_y_map; 
   } else {
