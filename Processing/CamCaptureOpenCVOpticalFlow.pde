@@ -33,8 +33,8 @@ float timeSOld_ = timeMS_;
 
 Timer timer;
 
-int videoWidth_ = 320;
-int videoHeight_ = 180;
+int videoWidth_ = 640;
+int videoHeight_ = 360;
 // int scale_ = 6;
 int scale_ = 3;
 
@@ -77,6 +77,9 @@ boolean rectOver = false;
 void setup() {
   loadMap();
   fullScreen();
+  
+  frameRate(60);
+  
   //size(960,540);
   minim = new Minim(this);
   player = minim.loadFile("background.mp3");
@@ -90,7 +93,7 @@ void setup() {
   row_left = loadImage("arrow_left.png");
   row_right = loadImage("arrow_right.png");
   map = loadImage("map.png");
-  
+
   //new Timer instance
   timer = new Timer();
   point_actuelle = junctions.get(0);
@@ -110,7 +113,7 @@ void setup() {
 
     // The camera can be initialized directly using an
     // element from the array returned by list():
-    cam_ = new Capture(this, videoWidth_, videoHeight_, "Integrated Webcam");
+    cam_ = new Capture(this, videoWidth_, videoHeight_, "HD Pro Webcam C920");
 
     opencv_ = new OpenCV(this, videoWidth_, videoHeight_);
 
@@ -315,7 +318,7 @@ void draw() {
     selectDelayS_ -= timeS_ - timeSOld_;
 
     background(0,0,0);    
-    scale(2);
+    //scale(2);//pas ouf  / 20
 
     if ( frames_[currentFrameIndex_] != null ) {
 
@@ -374,7 +377,7 @@ void draw() {
 
       detectHotSpots();
 
-      drawTimer();
+      //drawTimer();
       
       //Winner Winner, Chicken Dinner
       if (game_over) {
