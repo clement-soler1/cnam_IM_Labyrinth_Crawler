@@ -66,7 +66,6 @@ AudioPlayer beep;
 
 //game over
 boolean game_over = false;
-boolean rectOver = false;
 
 void setup() {
   loadMap();
@@ -401,7 +400,7 @@ void keyPressed() {
     cam_.stop();
     exit();
   }
-  if (keyCode == UP) {
+  if (keyCode == UP || ( keyCode == 'i' ) || ( keyCode == 'I' )) {
     Junction dest = point_actuelle.getDestination(0, junctions);
     if (dest != null) {
       direction_actuelle = 0;
@@ -410,7 +409,7 @@ void keyPressed() {
       is_moving = true;
     }
   }
-  if (keyCode == RIGHT) {
+  if (keyCode == RIGHT || ( keyCode == 'l' ) || ( keyCode == 'L' )) {
     Junction dest = point_actuelle.getDestination(1, junctions);
     if (dest != null) {
       direction_actuelle = 1;
@@ -419,7 +418,7 @@ void keyPressed() {
       is_moving = true;
     }
   }
-  if (keyCode == DOWN) {
+  if (keyCode == DOWN || ( keyCode == 'k' ) || ( keyCode == 'K' )) {
     Junction dest = point_actuelle.getDestination(2, junctions);
     if (dest != null) {
       direction_actuelle = 2;
@@ -428,7 +427,7 @@ void keyPressed() {
       is_moving = true;
     }
   }
-  if (keyCode == LEFT) {
+  if (keyCode == LEFT || ( keyCode == 'j' ) || ( keyCode == 'J' )) {
     Junction dest = point_actuelle.getDestination(3, junctions);
     if (dest != null) {
       direction_actuelle = 3;

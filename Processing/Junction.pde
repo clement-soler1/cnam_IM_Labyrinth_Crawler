@@ -14,10 +14,6 @@ class Junction {
     this.id = id;
   }
   
-  
-  /**
-  qsdlmifhlqsdf
-  **/
   public Junction getDestination(Integer direction, Map<Integer, Junction> junctions) {
     return junctions.get(this.direction[direction]);
   }
