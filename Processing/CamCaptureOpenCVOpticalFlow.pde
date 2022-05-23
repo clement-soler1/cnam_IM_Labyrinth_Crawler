@@ -513,6 +513,7 @@ void goToBottom() {
 
 void drawGameOverMenu() {
   PImage go = loadImage("bg_go.png");
+  tint(255,255,255,255);
   image(go, 0, 0, videoWidth_, videoHeight_);
   
 }
