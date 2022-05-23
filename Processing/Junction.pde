@@ -9,8 +9,8 @@ class Junction {
   
   Junction(Integer[] direction, Integer x, Integer y, Integer id) {   
     this.direction = direction;
-    this.x = x == null ? null :-x + 160;
-    this.y = y == null ? null :-y + 90;
+    this.x = x == null ? null :-x + 160 + 160;
+    this.y = y == null ? null :-y + 90 + 100;
     this.id = id;
   }
   

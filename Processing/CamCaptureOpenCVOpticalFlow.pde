@@ -17,10 +17,10 @@ PImage map;
 
 Integer speed = 15;
 //
-Integer x_map = -130;
-Integer y_map = -640;
-Integer destination_x_map = -130;
-Integer destination_y_map = -640;
+Integer x_map = 30;//-130;
+Integer y_map = -540;//-640;
+Integer destination_x_map = 30;
+Integer destination_y_map = -540;
 Boolean is_moving = false;
 Integer direction_actuelle = 2;
 Junction point_actuelle;
@@ -114,7 +114,7 @@ void setup() {
 
     // The camera can be initialized directly using an
     // element from the array returned by list():
-    cam_ = new Capture(this, videoWidth_, videoHeight_, "HD Pro Webcam C920");
+    cam_ = new Capture(this, videoWidth_, videoHeight_, "AUKEY PC-LM1 USB Camera");
 
     opencv_ = new OpenCV(this, videoWidth_, videoHeight_);
 
