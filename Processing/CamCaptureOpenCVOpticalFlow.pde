@@ -59,6 +59,7 @@ AnimationController animation;
 int previousTime;
 int runAnimationDuration = 1500;
 
+//Sound
 Minim minim;
 AudioPlayer player;
 AudioPlayer beep;
@@ -70,17 +71,19 @@ boolean rectOver = false;
 void setup() {
   loadMap();
   fullScreen();
-  
+  //Sound
   minim = new Minim(this);
   player = minim.loadFile("background.mp3");
   player.setGain(0.5);
   player.loop();
-  
   beep = minim.loadFile("beep.mp3");
+  
+  //Map Image
   map = loadImage("map-min.png");
   
   point_actuelle = junctions.get(0);
   
+  //Set End Game
   game_over = false;
   
   String[] cameras = Capture.list();
@@ -109,29 +112,35 @@ void setup() {
     flow_.setPolyN(3); // default : 7
     flow_.setPolySigma(1.5); // default : 1.5
 
+    //Init HotSpot
     int m = 10;
-    int w = 200;
-    int h = 120;
+    int w = 100;
+    int h = 60;
 
     int x = m;
     int y = m;
+    // Top
     x = videoWidth_ / 2 - w / 2;
     hotSpots_[0] = new HotSpot(x,y,w,h);
-
-    x = m;
-    y = videoHeight_ /2 - h /2 ;
+    
+    // Right
+    x = m + 90;
+    y = videoHeight_ /2 - h /2  - 50;
     hotSpots_[1] = new HotSpot(x,y,w,h);
 
-    x = videoWidth_ - m - w;
+    //Left
+    x = videoWidth_ - m - w - 90;
     hotSpots_[2] = new HotSpot(x,y,w,h);
 
-    x = videoWidth_ / 2 - w / 2;
+    //BottomS
+    x = videoWidth_ / 4 - w / 2;
     y = videoHeight_ - m - h;
     hotSpots_[3] = new HotSpot(x,y,w,h);
 
 
     cam_.start();
   }
+    //Animation
     animation = new AnimationController();
     previousTime = millis();
 }
@@ -293,16 +302,14 @@ Integer convertHotSpotsToJunction(Integer hotSpot) {
 //===========
 void draw() {
   
+  //Video Processing
   synchronized(this) {
 
     timeMS_ = millis();
     timeS_ = timeMS_ * 0.001;
-
     selectDelayS_ -= timeS_ - timeSOld_;
 
-    
     background(0,0,0);   
-
     if ( frames_[currentFrameIndex_] != null ) {
 
       frames_[currentFrameIndex_].loadPixels();
@@ -315,21 +322,21 @@ void draw() {
         }
       }
       fullFrame_.updatePixels();
-
       tint(255, 255, 255, 255);
       image(fullFrame_, 0, 0);
-
       stroke(255,0,0);
       strokeWeight(1.);
-      
-      fill(153);
-  
-      
+      fill(153);      
       scale(scale_);
 
+      // Opacity
       tint(255, 170);
+      
+      //Load Image
       image(map,x_map,y_map);
+      //Update Player
       loadPlayer();
+      // Update map & Player
       if (destination_x_map < x_map) {
         goToRight();
       } else if (destination_x_map > x_map) {
@@ -343,17 +350,19 @@ void draw() {
         point_actuelle = point_actuelle.getDestination(direction_actuelle, junctions);
         selectedHotSpotIndex_ = -1;
         if (point_actuelle.id == point_victoire) {
-          // Victoire ICI
           game_over = true;
           drawGameOverMenu();
         }
       }
+      // Draw Optical Flow
+      //opencv_.drawOpticalFlow();
       
+      //Draw HotSpot
       drawHotSpots();
-
+      //Detection
       detectHotSpots();
       
-      //Winner Winner, Chicken Dinner
+      //Load End Game 
       if (game_over) {
         drawGameOverMenu();
       }
@@ -384,6 +393,8 @@ void captureEvent(Capture c) {
 }
 
 //=================
+
+// Keyboard Control
 void keyPressed() {
   
   if ( (keyCode == ESC) || ( keyCode == 'q' ) || ( keyCode == 'Q' )) {
@@ -434,6 +445,7 @@ void keyPressed() {
 
 }
 
+// Updating player
 void loadPlayer() {
   if(!is_moving) {
     animation.changeDirection("down");
@@ -443,6 +455,7 @@ void loadPlayer() {
   }
 }
 
+// Load Json mapKey
 void loadMap() {
   junctions = new HashMap<Integer, Junction>();
   JSONArray json = loadJSONArray("map.json");
@@ -466,7 +479,7 @@ void loadMap() {
 }
 
 
-//TO DO
+//Move map & player
 void goToLeft() {
   animation.changeDirection("left");
   animation.displayIdle = !animation.displayIdle;
@@ -477,7 +490,6 @@ void goToLeft() {
   }
 }
 
-//TO DO
 void goToRight() {  
   animation.changeDirection("right");
   animation.displayIdle = !animation.displayIdle;
@@ -489,7 +501,6 @@ void goToRight() {
   x_map = x_map - speed;
 }
 
-//TO DO
 void goToTop() {
   animation.changeDirection("up");
   animation.displayIdle = !animation.displayIdle;
@@ -499,8 +510,7 @@ void goToTop() {
     y_map = y_map + speed;
   }
 }
-
-//TO DO
+ 
 void goToBottom() {
   animation.changeDirection("down");
   animation.displayIdle = !animation.displayIdle;
@@ -511,13 +521,15 @@ void goToBottom() {
   }
 }
 
+
+// End Game Image
 void drawGameOverMenu() {
   PImage go = loadImage("bg_go.png");
   tint(255,255,255,255);
-  image(go, 0, 0, videoWidth_, videoHeight_);
-  
+  image(go, 0, 0, videoWidth_, videoHeight_);  
 }
 
+// Stop minim 
 void stop() {
    beep.close();
    minim.stop();
