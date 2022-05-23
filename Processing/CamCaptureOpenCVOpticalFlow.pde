@@ -3,20 +3,14 @@ import gab.opencv.*;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
-//import processing.sound.*;
 import ddf.minim.*;
 
 Capture cam_;
 OpenCV opencv_;
 
-PImage row_bottom;
-PImage row_top;
-PImage row_left;
-PImage row_right;
 PImage map;
 
 Integer speed = 15;
-//
 Integer x_map = 30;//-130;
 Integer y_map = -540;//-640;
 Integer destination_x_map = 30;
@@ -32,11 +26,9 @@ float timeMS_ = millis();
 float timeS_ = timeMS_ * 0.001;
 float timeSOld_ = timeMS_;
 
-Timer timer;
 
 int videoWidth_ = 640;
 int videoHeight_ = 360;
-// int scale_ = 6;
 int scale_ = 3;
 
 PImage[] frames_ = new PImage[2];
@@ -79,24 +71,14 @@ void setup() {
   loadMap();
   fullScreen();
   
-  frameRate(60);
-  
-  //size(960,540);
   minim = new Minim(this);
   player = minim.loadFile("background.mp3");
   player.setGain(0.5);
   player.loop();
   
   beep = minim.loadFile("beep.mp3");
-
-  //row_bottom = loadImage("arrow_bottom.png");
-  //row_top = loadImage("arrow_top.png");
-  //row_left = loadImage("arrow_left.png");
-  //row_right = loadImage("arrow_right.png");
   map = loadImage("map.png");
-
-  //new Timer instance
-  timer = new Timer();
+  
   point_actuelle = junctions.get(0);
   
   game_over = false;
@@ -320,11 +302,8 @@ void draw() {
 
     
     background(0,0,0);   
-    //scale(2);//pas ouf  / 20
 
     if ( frames_[currentFrameIndex_] != null ) {
-
-      //frames_[currentFrameIndex_].resize(640*scale,360*scale); // slow...
 
       frames_[currentFrameIndex_].loadPixels();
       fullFrame_.loadPixels();
@@ -344,10 +323,11 @@ void draw() {
       strokeWeight(1.);
       
       fill(153);
-      rect(0, 0, 2500, 1500);
+  
+      
       scale(scale_);
 
-      
+      tint(255, 170);
       image(map,x_map,y_map);
       loadPlayer();
       if (destination_x_map < x_map) {
@@ -372,8 +352,6 @@ void draw() {
       drawHotSpots();
 
       detectHotSpots();
-
-      //drawTimer();
       
       //Winner Winner, Chicken Dinner
       if (game_over) {
@@ -397,7 +375,6 @@ void captureEvent(Capture c) {
     opencv_.useGray();
     opencv_.loadImage(cam_);
     opencv_.flip(OpenCV.HORIZONTAL);
-    //opencv_.flip(OpenCV.VERTICAL);
     opencv_.calculateOpticalFlow();
 
     frames_[currentFrameIndex_] = opencv_.getSnapshot();
@@ -448,11 +425,6 @@ void keyPressed() {
       destination_y_map = dest.y;
       is_moving = true;
     }
-  }
-  
-  
-  if ( ( keyCode == 'n' ) || ( keyCode == 'N' )) {
-    timer.start();
   }
   
   if ( ( keyCode == 'm' ) || ( keyCode == 'M' )) {
