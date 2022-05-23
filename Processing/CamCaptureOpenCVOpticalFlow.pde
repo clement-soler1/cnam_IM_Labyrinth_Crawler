@@ -72,8 +72,8 @@ AudioPlayer beep;
 
 void setup() {
   loadMap();
-  //fullScreen();
-  size(960,540);
+  fullScreen();
+  //size(960,540);
   minim = new Minim(this);
   player = minim.loadFile("background.mp3");
   player.setGain(0.5);
@@ -308,7 +308,8 @@ void draw() {
 
     selectDelayS_ -= timeS_ - timeSOld_;
 
-    background(0,0,0);
+    background(0,0,0);    
+    scale(2);
 
     if ( frames_[currentFrameIndex_] != null ) {
 
