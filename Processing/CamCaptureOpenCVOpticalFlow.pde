@@ -16,6 +16,7 @@ PImage row_right;
 PImage map;
 
 Integer speed = 15;
+//
 Integer x_map = -130;
 Integer y_map = -640;
 Integer destination_x_map = -130;
@@ -337,17 +338,10 @@ void draw() {
 
       tint(255, 255, 255, 255);
       image(fullFrame_, 0, 0);
-      // Left
-      image(row_left,0,200, 150, 150);
-      // Right
-      image(row_right,800,200, 150, 150);
-      // Top
-      image(row_top,400,0, 150, 150);
-      // Bottom
-      image(row_bottom,400,400, 150, 150);
 
       stroke(255,0,0);
       strokeWeight(1.);
+
 
       scale(scale_);
 
