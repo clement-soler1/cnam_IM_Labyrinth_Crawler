@@ -5,6 +5,7 @@ import screeninfo
 import keyboard
 
 
+# function to allow to close cv2 window by getting out of the while loop
 def leave():
     global started
     started = False
@@ -20,6 +21,7 @@ dim = (width, height)
 started = True
 
 
+# get the bounding box of a detected hand
 def getHandBoundingBox(handLms):
     bbox = dict()
     bbox["minX"] = float("inf")
@@ -38,27 +40,27 @@ def getHandBoundingBox(handLms):
     return bbox
 
 
+# function to start the program to track the hand
 def start():
     global started
     started = True
 
     cap = cv2.VideoCapture(CAMERA_NUMBER)
+    # handle if camera number doesn't correspond to a camera
     if not cap.isOpened():
         print("Cannot open camera")
         exit()
 
-
+    # initialize hand detection with mediapipe
     mpHands = mp.solutions.hands
     hands = mpHands.Hands(static_image_mode=False,
                           max_num_hands=1,
                           min_detection_confidence=0.7,
                           min_tracking_confidence=0.7)
-    mpDraw = mp.solutions.drawing_utils
 
-    pTime = 0
-    cTime = 0
     bbox = dict()
 
+    # main loop
     while True and started:
         success, img = cap.read()
         map_base = cv2.imread("data/map.png")
@@ -70,16 +72,11 @@ def start():
             for handLms in results.multi_hand_landmarks:
                 bbox = getHandBoundingBox(handLms)
                 h, w, c = game_map.shape
-                pt1 = (round(bbox["maxX"] * w), round(bbox["minY"] * h))
-                pt2 = (round(bbox["minX"] * w), round(bbox["maxY"] * h))
 
                 box_center = (w - round(((bbox["minX"] * w) + (bbox["maxX"] * w))/2),
                               round(((bbox["minY"] * h) + (bbox["maxY"] * h)) / 2))
-                #cv2.circle(game_map, box_center, 100, (0, 255, 0))
 
-                bbox["center"] = [(bbox["minX"] + bbox["maxX"])/2, (bbox["minY"] + bbox["maxY"])/2]
-
-                # traitement de l'image
+                # image processing
                 # draw filled circle in white on black background as mask
                 mask = np.zeros_like(game_map)
                 mask = cv2.circle(mask, box_center, 200, (255, 255, 255), -1)
@@ -87,10 +84,12 @@ def start():
                 # apply mask to image
                 result_img = cv2.bitwise_and(game_map, mask)
 
+        # draw the window
         cv2.namedWindow("window", cv2.WND_PROP_FULLSCREEN)
         cv2.setWindowProperty("window", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
         cv2.imshow("window", result_img)
         cv2.waitKey(1)
 
+    # close the cv2 window
     cv2.destroyAllWindows()
     cv2.waitKey(1)
