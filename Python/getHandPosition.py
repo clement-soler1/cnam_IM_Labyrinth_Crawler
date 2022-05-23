@@ -82,12 +82,14 @@ def start():
                 # traitement de l'image
                 # draw filled circle in white on black background as mask
                 mask = np.zeros_like(game_map)
-                mask = cv2.circle(mask, box_center, 100, (255, 255, 255), -1)
+                mask = cv2.circle(mask, box_center, 200, (255, 255, 255), -1)
 
                 # apply mask to image
                 result_img = cv2.bitwise_and(game_map, mask)
 
-        cv2.imshow("Image", result_img)
+        cv2.namedWindow("window", cv2.WND_PROP_FULLSCREEN)
+        cv2.setWindowProperty("window", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+        cv2.imshow("window", result_img)
         cv2.waitKey(1)
 
     cv2.destroyAllWindows()
