@@ -70,6 +70,10 @@ Minim minim;
 AudioPlayer player;
 AudioPlayer beep;
 
+//game over
+boolean game_over = false;
+boolean rectOver = false;
+
 void setup() {
   loadMap();
   fullScreen();
@@ -91,6 +95,8 @@ void setup() {
   timer = new Timer();
   point_actuelle = junctions.get(0);
   
+  game_over = false;
+  
   String[] cameras = Capture.list();
 
   if (cameras.length == 0) {
@@ -104,7 +110,7 @@ void setup() {
 
     // The camera can be initialized directly using an
     // element from the array returned by list():
-    cam_ = new Capture(this, videoWidth_, videoHeight_, "AUKEY PC-LM1 USB Camera");
+    cam_ = new Capture(this, videoWidth_, videoHeight_, "Integrated Webcam");
 
     opencv_ = new OpenCV(this, videoWidth_, videoHeight_);
 
@@ -359,6 +365,8 @@ void draw() {
         selectedHotSpotIndex_ = -1;
         if (point_actuelle.id == point_victoire) {
           // Victoire ICI
+          game_over = true;
+          drawGameOverMenu();
         }
       }
       
@@ -367,6 +375,11 @@ void draw() {
       detectHotSpots();
 
       drawTimer();
+      
+      //Winner Winner, Chicken Dinner
+      if (game_over) {
+        drawGameOverMenu();
+      }
 
       first_ = false;
     }
@@ -440,6 +453,11 @@ void keyPressed() {
   
   if ( ( keyCode == 'n' ) || ( keyCode == 'N' )) {
     timer.start();
+  }
+  
+  if ( ( keyCode == 'm' ) || ( keyCode == 'M' )) {
+    game_over = true;
+    drawGameOverMenu();
   }
 
 }
@@ -523,6 +541,12 @@ void goToBottom() {
 
 void drawTimer() {
   text(timer.getStringTime(), 10, 10);
+}
+
+void drawGameOverMenu() {
+  PImage go = loadImage("bg_go.png");
+  image(go, 0, 0, videoWidth_, videoHeight_);
+  
 }
 
 void stop() {
