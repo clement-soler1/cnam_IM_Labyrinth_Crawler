@@ -10,7 +10,7 @@ OpenCV opencv_;
 
 PImage map;
 
-Integer speed = 15;
+Integer speed = 25;
 Integer x_map = 30;//-130;
 Integer y_map = -540;//-640;
 Integer destination_x_map = 30;
@@ -77,7 +77,7 @@ void setup() {
   player.loop();
   
   beep = minim.loadFile("beep.mp3");
-  map = loadImage("map.png");
+  map = loadImage("map-min.png");
   
   point_actuelle = junctions.get(0);
   
@@ -509,10 +509,6 @@ void goToBottom() {
   } else {
     y_map = y_map - speed;
   }
-}
-
-void drawTimer() {
-  text(timer.getStringTime(), 10, 10);
 }
 
 void drawGameOverMenu() {
