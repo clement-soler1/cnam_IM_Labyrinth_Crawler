@@ -10,7 +10,7 @@ OpenCV opencv_;
 
 PImage map;
 
-Integer speed = 25;
+Integer speed = 30;
 Integer x_map = 30;//-130;
 Integer y_map = -540;//-640;
 Integer destination_x_map = 30;
