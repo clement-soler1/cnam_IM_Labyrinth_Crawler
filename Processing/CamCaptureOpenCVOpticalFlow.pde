@@ -318,7 +318,8 @@ void draw() {
 
     selectDelayS_ -= timeS_ - timeSOld_;
 
-    background(0,0,0);    
+    
+    background(0,0,0);   
     //scale(2);//pas ouf  / 20
 
     if ( frames_[currentFrameIndex_] != null ) {
@@ -341,8 +342,9 @@ void draw() {
 
       stroke(255,0,0);
       strokeWeight(1.);
-
-
+      
+      fill(153);
+      rect(0, 0, 2500, 1500);
       scale(scale_);
 
       
