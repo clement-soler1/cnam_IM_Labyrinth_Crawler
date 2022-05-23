@@ -3,7 +3,7 @@ import gab.opencv.*;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
-import processing.sound.*;
+//import processing.sound.*;
 import ddf.minim.*;
 
 Capture cam_;
@@ -89,10 +89,10 @@ void setup() {
   
   beep = minim.loadFile("beep.mp3");
 
-  row_bottom = loadImage("arrow_bottom.png");
-  row_top = loadImage("arrow_top.png");
-  row_left = loadImage("arrow_left.png");
-  row_right = loadImage("arrow_right.png");
+  //row_bottom = loadImage("arrow_bottom.png");
+  //row_top = loadImage("arrow_top.png");
+  //row_left = loadImage("arrow_left.png");
+  //row_right = loadImage("arrow_right.png");
   map = loadImage("map.png");
 
   //new Timer instance
@@ -114,7 +114,7 @@ void setup() {
 
     // The camera can be initialized directly using an
     // element from the array returned by list():
-    cam_ = new Capture(this, videoWidth_, videoHeight_, "AUKEY PC-LM1 USB Camera");
+    cam_ = new Capture(this, videoWidth_, videoHeight_, "HD Pro Webcam C920");
 
     opencv_ = new OpenCV(this, videoWidth_, videoHeight_);
 
@@ -128,8 +128,8 @@ void setup() {
     flow_.setPolySigma(1.5); // default : 1.5
 
     int m = 10;
-    int w = 50;
-    int h = 30;
+    int w = 200;
+    int h = 120;
 
     int x = m;
     int y = m;
@@ -406,6 +406,7 @@ void captureEvent(Capture c) {
 
 //=================
 void keyPressed() {
+  
   if ( (keyCode == ESC) || ( keyCode == 'q' ) || ( keyCode == 'Q' )) {
     cam_.stop();
     exit();

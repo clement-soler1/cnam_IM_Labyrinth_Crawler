@@ -86,7 +86,6 @@ def start():
 
                 # apply mask to image
                 result_img = cv2.bitwise_and(game_map, mask)
-
         cv2.imshow("Image", result_img)
         cv2.waitKey(1)
 
